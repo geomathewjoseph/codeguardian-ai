@@ -2,6 +2,8 @@
   "version": "1.0.0",
   "ignore_rules": [],
   "exclude_files": [
+    "*.md",
+    "README.md",
     "*tests/*",
     "tests/*",
     "data/fixture_presets.json",

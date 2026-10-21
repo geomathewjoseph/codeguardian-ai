@@ -29,7 +29,9 @@ console = Console(legacy_windows=False)
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 
-def get_git_diff(staged_only: bool = False, repo_dir: Optional[Path] = None) -> str:
+def get_git_diff(staged_only: bool = False, repo_dir: Optional[Path] = None, staged: Optional[bool] = None) -> str:
+    if staged is not None:
+        staged_only = staged
     target_dir = repo_dir or Path.cwd()
     args = ["git", "diff", "--no-ext-diff"]
     if staged_only:

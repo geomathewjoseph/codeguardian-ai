@@ -87,7 +87,7 @@ FIXTURE_PRESETS = load_fixture_presets()
 def _run_git(*args: str) -> Optional[str]:
     try:
         return subprocess.check_output(
-            ["git", *args], cwd=ROOT_DIR, stderr=subprocess.DEVNULL, text=True
+            ["git", *args], cwd=ROOT_DIR, stderr=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace"
         ).strip()
     except (OSError, subprocess.CalledProcessError):
         return None

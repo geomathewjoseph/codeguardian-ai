@@ -219,6 +219,8 @@ def apply_patch_to_working_tree(
                 cwd=root,
                 stderr=subprocess.DEVNULL,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
             ).strip()
             if stash_out:
                 backup_ref = stash_out
@@ -237,6 +239,8 @@ def apply_patch_to_working_tree(
             cwd=root,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         if proc_check.returncode != 0:
             return False, backup_ref, [], f"Patch check failed: {proc_check.stderr.strip() or 'Conflicts detected'}"
@@ -247,6 +251,8 @@ def apply_patch_to_working_tree(
             cwd=root,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         if proc_apply.returncode != 0:
             return False, backup_ref, [], f"Patch apply failed: {proc_apply.stderr.strip()}"
@@ -255,6 +261,8 @@ def apply_patch_to_working_tree(
             ["git", "diff", "--name-only"],
             cwd=root,
             text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         modified = [line.strip() for line in status_out.splitlines() if line.strip()]
         return True, backup_ref, modified, f"Successfully applied patch to {len(modified)} file(s)"
@@ -282,12 +290,16 @@ def revert_patch_from_working_tree(
                 cwd=root,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
             )
             if proc_rev.returncode == 0:
                 status_out = subprocess.check_output(
                     ["git", "diff", "--name-only"],
                     cwd=root,
                     text=True,
+                    encoding="utf-8",
+                    errors="replace",
                 )
                 modified = [line.strip() for line in status_out.splitlines() if line.strip()]
                 return True, modified, "Successfully reverted patch via reverse diff."
@@ -302,6 +314,8 @@ def revert_patch_from_working_tree(
             cwd=root,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         if check_ref.returncode == 0:
             proc_restore = subprocess.run(
@@ -309,6 +323,8 @@ def revert_patch_from_working_tree(
                 cwd=root,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
             )
             if proc_restore.returncode == 0:
                 return True, [], f"Successfully restored working tree from backup checkpoint ({ref_to_restore})."
