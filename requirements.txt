@@ -1,0 +1,25 @@
+# Core PyTorch and ML libraries
+transformers>=4.45.0
+peft>=0.13.0
+accelerate>=0.34.0
+bitsandbytes>=0.43.0
+datasets>=2.20.0
+trl>=0.11.0
+scipy
+sentencepiece
+protobuf
+
+# Hardware & Utilities
+pyyaml>=6.0.1
+rich>=13.7.0
+psutil>=5.9.0
+
+# Serving & Web Application
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+python-multipart>=0.0.9
+aiofiles>=23.2.1
+
+# Optional inference acceleration
+# unsloth will be installed via setup_wsl.sh

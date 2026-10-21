@@ -1,0 +1,58 @@
+# ==============================================================================
+# CodeGuardian: QLoRA Fine-Tuning Configuration
+# Calibrated for: NVIDIA RTX 5060 Laptop (8GB VRAM) + 24GB System RAM
+# Architecture: Qwen 2.5 Coder (3B / 7B) & DeepSeek-R1-Distill-Qwen
+# ==============================================================================
+
+# Model Choice:
+# - Recommended for 8GB VRAM (Instant training, 4.2GB VRAM usage):
+#   "Qwen/Qwen2.5-Coder-3B-Instruct" or "unsloth/Qwen2.5-Coder-3B-Instruct"
+# - Viable for 8GB VRAM with batch_size=1 (Uses ~7.2GB VRAM):
+#   "Qwen/Qwen2.5-Coder-7B-Instruct" or "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+model:
+  name_or_path: "Qwen/Qwen2.5-Coder-3B-Instruct"
+  max_seq_length: 2048
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_use_double_quant: true
+  bnb_4bit_compute_dtype: "bfloat16" # RTX 5060 natively excels at bfloat16
+
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+data:
+  train_file: "data/sample_train.jsonl"
+  val_file: "data/sample_val.jsonl"
+  val_size: 0.1
+  chat_template: "chatml" # Standard Qwen2.5 ChatML format
+
+training:
+  output_dir: "output/codeguardian-qwen-3b-lora"
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 0.0002
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  logging_steps: 10
+  save_strategy: "epoch"
+  eval_strategy: "epoch"
+  bf16: true
+  fp16: false
+  gradient_checkpointing: true
+  optim: "paged_adamw_8bit" # Prevents Out-Of-Memory spikes by paging to 24GB RAM
+  seed: 42
+  dataloader_num_workers: 2

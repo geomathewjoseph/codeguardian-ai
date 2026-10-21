@@ -1,0 +1,16 @@
+#!/bin/bash
+# ==============================================================================
+# CodeGuardian: Launch Local Web UI
+# ==============================================================================
+
+set -e
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$PROJECT_DIR"
+
+if [ -d "venv" ]; then
+    source venv/bin/activate
+fi
+
+echo "=== Starting CodeGuardian AI Web Interface ==="
+echo "Access the dashboard at: http://127.0.0.1:8000"
+python3 -m uvicorn app.server:app --host 0.0.0.0 --port 8000 --reload

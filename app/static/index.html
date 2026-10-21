@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>CodeGuardian Workstation · Code Review & Security</title>
+  <meta name="description" content="Local-first Git diff security review and deterministic AST analysis workstation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=10">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- ═══════════════════════════════════════════════════════
+         Top Navigation / Command Bar (42px)
+         ═══════════════════════════════════════════════════════ -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <button class="nav-icon-btn" id="toggleFilesBtn" type="button" title="Toggle changed files panel (b)" aria-label="Toggle changed files">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="3" x2="9" y2="21"/>
+          </svg>
+        </button>
+
+        <div class="app-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/>
+            <path d="M9 12l2 2 4-4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="brand-title">CodeGuardian</span>
+        </div>
+
+        <span class="nav-divider">/</span>
+
+        <div class="repo-meta-pill" id="repoMetaGroup" title="Workspace Repository Context">
+          <svg class="icon-xs text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="6" cy="6" r="3"/>
+            <circle cx="18" cy="6" r="3"/>
+            <path d="M6 9v6M18 9a9 9 0 0 1-9 9"/>
+          </svg>
+          <span class="repo-name" id="repoName">repository</span>
+          <span class="branch-tag" id="branchBadge">
+            <span id="branchName">HEAD</span>
+          </span>
+          <span class="worktree-tag" id="workingTreeBadge">
+            <span id="workingTree">checking...</span>
+          </span>
+          <!-- Hidden compatibility elements -->
+          <span class="is-hidden" id="targetBranch">N/A</span>
+          <span class="is-hidden" id="commitHash">N/A</span>
+        </div>
+
+        <span class="nav-divider">/</span>
+
+        <!-- Review Status Pill (in-flow, prevents collision) -->
+        <span class="review-status-pill" id="reviewState">Ready</span>
+
+        <!-- Hidden Model Pill to preserve DOM IDs for JS compatibility -->
+        <div class="model-meta-pill is-hidden" id="modelPill" title="Configured Model & Quantization" aria-hidden="true">
+          <span class="model-name" id="topModelName">Qwen 2.5 Coder 3B</span>
+          <span class="model-quant-tag" id="topModelQuant">4-bit NF4</span>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <!-- Install Git Hook button -->
+        <button class="nav-btn" id="installHookBtn" type="button" title="Install Git pre-commit security gate">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>Git Hook</span>
+        </button>
+
+        <!-- Compliance button -->
+        <button class="nav-btn" id="complianceBtn" type="button" title="View OWASP Top 10 & CWE Compliance Matrix" aria-expanded="false" aria-controls="complianceDrawer">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span>Compliance</span>
+        </button>
+
+        <!-- Security Policy button -->
+        <button class="nav-btn" id="policyBtn" type="button" title="Configure Security Policy & Custom Rules" aria-expanded="false" aria-controls="policyDrawer">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Policy</span>
+        </button>
+
+        <!-- Keyboard shortcuts button -->
+        <button class="nav-btn" id="shortcutsBtn" type="button" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">
+          <kbd class="kbd-hint">?</kbd>
+          <span>Shortcuts</span>
+        </button>
+
+        <!-- Audit History toggle -->
+        <button class="nav-btn" id="historyBtn" type="button" title="View past review sessions" aria-expanded="false" aria-controls="historyDrawer">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>History</span>
+        </button>
+
+        <!-- Export Dropdown -->
+        <div class="dropdown-container" id="exportWrapper">
+          <button class="nav-btn" id="exportBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Export review report">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export</span>
+          </button>
+          <div class="dropdown-popover is-hidden" id="exportMenu" role="menu">
+            <button class="dropdown-item" id="exportMdBtn" type="button" role="menuitem">
+              <span class="item-title">Markdown Audit</span>
+              <span class="item-ext">.md</span>
+            </button>
+            <button class="dropdown-item" id="exportPrBtn" type="button" role="menuitem">
+              <span class="item-title">PR Review Comment</span>
+              <span class="item-ext">.md</span>
+            </button>
+            <button class="dropdown-item" id="exportSarifBtn" type="button" role="menuitem">
+              <span class="item-title">SARIF Security Log</span>
+              <span class="item-ext">.sarif</span>
+            </button>
+            <button class="dropdown-item" id="exportJsonBtn" type="button" role="menuitem">
+              <span class="item-title">JSON Audit Log</span>
+              <span class="item-ext">.json</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- System Diagnostics Trigger -->
+        <button class="nav-btn engine-trigger" id="engineButton" type="button" aria-expanded="false" aria-controls="enginePanel" title="System Diagnostics & Telemetry">
+          <span class="status-indicator ready" id="engineDot"></span>
+          <span id="engineLabel">Qwen 2.5 Coder</span>
+          <span class="hardware-pill" id="hardwareLabel">RTX 5060 · 8.0 GB</span>
+        </button>
+
+        <!-- Engine Flyout / System Diagnostics -->
+        <aside class="engine-popover is-hidden" id="enginePanel" aria-label="System Diagnostics">
+          <div class="popover-header">
+            <div class="popover-title-row">
+              <h4>System Resources &amp; Model</h4>
+              <span class="badge-tag">Local Telemetry</span>
+            </div>
+            <span class="privacy-note">Real-time hardware allocation · Zero remote egress</span>
+          </div>
+          <div class="popover-body">
+            <!-- GPU VRAM Allocation -->
+            <div class="resource-block" id="vramMeterBox">
+              <div class="resource-row">
+                <span class="resource-label">GPU VRAM (RTX 5060)</span>
+                <span class="resource-val" id="vramBarLabel">3,578 MB / 8,151 MB (44%)</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill vram-fill" id="vramBarFill" style="width: 44%;"></div>
+              </div>
+              <div class="resource-sub" id="vramSubLabel">Free: 4,573 MB · GPU Load: 3%</div>
+            </div>
+
+            <!-- System RAM Allocation -->
+            <div class="resource-block" id="ramMeterBox">
+              <div class="resource-row">
+                <span class="resource-label">System RAM (Host)</span>
+                <span class="resource-val" id="ramBarLabel">17.5 GB / 23.1 GB (76%)</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill ram-fill" id="ramBarFill" style="width: 76%;"></div>
+              </div>
+              <div class="resource-sub" id="ramSubLabel">Host Available: 5.6 GB · Process RSS: 516 MB</div>
+            </div>
+
+            <!-- CPU Utilization -->
+            <div class="resource-block" id="cpuMeterBox">
+              <div class="resource-row">
+                <span class="resource-label">CPU Compute Load</span>
+                <span class="resource-val" id="cpuBarLabel">12.8% (32 Cores)</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill cpu-fill" id="cpuBarFill" style="width: 13%;"></div>
+              </div>
+            </div>
+
+            <div class="divider-hairline"></div>
+
+            <div class="telemetry-grid">
+              <div class="tel-item"><span class="tel-key">Model</span><span class="tel-val font-mono" id="modelValue">Qwen/Qwen2.5-Coder-3B-Instruct</span></div>
+              <div class="tel-item"><span class="tel-key">Quant</span><span class="tel-val" id="quantValue">4-bit NF4 (Double Quant)</span></div>
+              <div class="tel-item"><span class="tel-key">Context</span><span class="tel-val" id="contextValue">2,048 tokens</span></div>
+              <div class="tel-item"><span class="tel-key">Adapter</span><span class="tel-val font-mono" id="adapterValue">codeguardian-qwen-3b-lora</span></div>
+              <div class="tel-item"><span class="tel-key">Engine</span><span class="tel-val" id="inferenceValue">Deterministic AST + Qwen 2.5</span></div>
+              <div class="tel-item"><span class="tel-key">Device</span><span class="tel-val" id="deviceValue">NVIDIA RTX 5060 (8GB)</span></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Main Workspace Layout: File Tree + Diff View + Audit Pane
+         ═══════════════════════════════════════════════════════ -->
+    <main class="main-workspace">
+      <!-- LEFT SIDEBAR: Changed Files Explorer -->
+      <aside class="files-sidebar" id="filesSidebar" aria-label="Changed files in diff">
+        <div class="sidebar-header">
+          <div class="sidebar-title-row">
+            <span class="sidebar-heading">Files Changed</span>
+            <span class="files-badge" id="filesBadge">0</span>
+          </div>
+        </div>
+        <div class="files-list" id="filesList" role="tablist" aria-label="Changed files list">
+          <div class="files-empty">No files loaded</div>
+        </div>
+      </aside>
+
+      <!-- CENTER: Diff Viewer Workstation -->
+      <section class="diff-section" aria-labelledby="diffHeading">
+        <!-- Diff Toolbar (Snippet 2: Grouped Review Hierarchy) -->
+        <div class="cg-review-toolbar diff-bar">
+          <div class="cg-toolbar-group">
+            <div class="cg-segmented tab-pill-group" role="group" aria-label="Diff format">
+              <button class="tab-pill is-active" id="formattedButton" type="button" data-view="diff">Diff</button>
+              <button class="tab-pill" id="rawButton" type="button" data-view="raw">Raw patch</button>
+            </div>
+
+            <!-- Changed file selector -->
+            <div class="file-picker-wrap">
+              <select id="fileSelect" aria-label="Changed file" disabled>
+                <option value="">Select changed file</option>
+              </select>
+            </div>
+
+            <div class="search-wrap">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input id="diffSearch" type="search" placeholder="Find in diff… (/)" aria-label="Find in diff" disabled>
+              <span class="search-matches" id="searchCount"></span>
+            </div>
+
+            <button class="btn-tool" id="wrapToggleBtn" type="button" title="Toggle line wrap (w)">
+              <span>Wrap</span>
+            </button>
+
+            <div class="diff-counts" id="diffStats">
+              <span class="stat-pill-add">+0</span>
+              <span class="stat-pill-del">-0</span>
+            </div>
+          </div>
+
+          <div class="cg-toolbar-group">
+            <div class="fixture-select-wrap">
+              <select id="fixtureSelect" aria-label="Review example" title="Load an example diff fixture">
+                <option value="">Examples</option>
+                <option value="sql_injection">SQL injection</option>
+                <option value="path_traversal">Path traversal</option>
+                <option value="clean_refactor">Clean refactor</option>
+              </select>
+            </div>
+
+            <button class="btn-action" id="fetchGitButton" type="button" data-action="fetch-git" title="Fetch local Git working tree changes (g)">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span>Fetch Git</span>
+            </button>
+
+            <button class="btn-action" id="copyDiffButton" type="button" data-action="copy-diff" title="Copy raw diff to clipboard" disabled>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span>Copy diff</span>
+            </button>
+            <button class="is-hidden" id="copyFileButton" type="button" disabled></button>
+
+            <button class="cg-primary-action btn-primary" id="reviewButton" type="button" data-action="run-review" disabled>
+              <span>Review</span>
+              <kbd class="kbd-btn">Ctrl ↵</kbd>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hidden scope inputs for JS compatibility -->
+        <fieldset class="is-hidden" style="display:none;">
+          <input type="radio" name="scope" value="ALL" checked>
+          <input type="radio" name="scope" value="SECURITY">
+          <input type="radio" name="scope" value="TESTS">
+        </fieldset>
+
+        <!-- Diff Canvas -->
+        <div class="diff-viewer-area" id="diffScroll">
+          <div class="formatted-diff-box" id="formattedDiff" aria-label="Formatted diff viewer"></div>
+          <textarea class="raw-diff-editor is-hidden" id="rawDiff" spellcheck="false" placeholder="Paste a unified Git diff (beginning with 'diff --git')…"></textarea>
+
+          <!-- Centered Workspace Ready Empty State (Snippet 4) -->
+          <div class="empty-diff-state" id="diffEmpty">
+            <section class="cg-empty-state">
+              <div class="cg-empty-kicker">WORKSPACE READY</div>
+              <h2>Choose changes to review</h2>
+              <p>
+                Inspect your local Git changes or open a test fixture.
+                Source code stays on this machine.
+              </p>
+              <div class="cg-empty-actions">
+                <button class="cg-primary-action" id="emptyGitFetchBtn" data-action="fetch-git" type="button">
+                  Load working-tree changes
+                </button>
+                <button id="emptySqlExampleBtn" data-action="choose-example" type="button">
+                  Open an example
+                </button>
+              </div>
+              <div class="cg-empty-footnote">
+                No review has been run in this session.
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="diff-status-bar">
+          <div class="diff-status-left">
+            <span id="diffHeading">Unified Diff</span>
+            <span class="status-sep">·</span>
+            <span class="diff-meta-hint" id="diffHunkInfo">No hunks loaded</span>
+          </div>
+          <div class="diff-status-right">
+            <span id="reviewTiming">Ready</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Security Audit & Findings Inspector -->
+      <section class="audit-section" aria-labelledby="auditHeading">
+        <div class="audit-header">
+          <div class="verdict-bar">
+            <div class="verdict-left">
+              <span class="verdict-tag verdict-neutral" id="verdict">NOT REVIEWED</span>
+              <span class="verdict-count" id="findingCount">Load a diff to begin</span>
+            </div>
+            <div class="verdict-right">
+              <button class="btn-copy-pr is-hidden" id="copyPrCommentBtn" type="button" title="Copy formatted markdown review for GitHub / GitLab PR comment">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                <span>Copy PR Review</span>
+              </button>
+            </div>
+          </div>
+          <div class="summary-row">
+            <p class="summary-paragraph" id="reviewSummary">Deterministic AST &amp; regex analysis with CWE categorization and test fixtures.</p>
+            <span class="engine-time" id="analysisMeta"></span>
+          </div>
+
+          <div class="filter-strip" role="group" aria-label="Filter findings by severity">
+            <button class="filter-btn is-active" id="clearFilter" type="button">All</button>
+            <button class="filter-btn severity critical" data-severity="CRITICAL" type="button">
+              <span class="dot-crit"></span> Critical <span class="badge" id="criticalCount">0</span>
+            </button>
+            <button class="filter-btn severity high" data-severity="HIGH" type="button">
+              <span class="dot-high"></span> High <span class="badge" id="highCount">0</span>
+            </button>
+            <button class="filter-btn severity medium" data-severity="MEDIUM" type="button">
+              <span class="dot-med"></span> Medium <span class="badge" id="mediumCount">0</span>
+            </button>
+            <button class="filter-btn severity low" data-severity="LOW" type="button">
+              <span class="dot-low"></span> Low <span class="badge" id="lowCount">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Scrollable findings area -->
+        <div class="audit-body">
+          <div class="findings-block">
+            <div class="findings-header">
+              <span class="section-label" id="findingsHeading">Security Findings</span>
+              <span class="nav-hint">Navigate: j / k or ↑ / ↓</span>
+            </div>
+            <div class="findings-items" id="findingsList" role="listbox" aria-label="Review findings">
+              <p class="placeholder">No findings to display. Run review to detect vulnerabilities.</p>
+            </div>
+          </div>
+
+          <!-- Finding Inspector (Security Advisory Architecture) -->
+          <aside class="cg-inspector finding-inspector is-hidden" id="findingDetail" aria-live="polite">
+            <header class="cg-finding-header">
+              <!-- Row 1: Badges & Confidence -->
+              <div class="cg-finding-badges-row">
+                <div class="cg-badges-left">
+                  <span class="cg-severity-critical badge-sev" id="detailSeverity">CRITICAL</span>
+                  <span class="badge-cvss" id="detailCvss" title="CVSS v3.1 Risk Score">CVSS 9.8</span>
+                  <span class="cg-mono cg-muted badge-rule" id="detailRule">CWE-89</span>
+                </div>
+                <span class="cg-mono cg-muted badge-conf" id="detailConfidence">Confidence: High</span>
+                <span class="is-hidden" id="detailProvenance"></span>
+              </div>
+
+              <!-- Row 2: Title and Explain Action -->
+              <div class="cg-finding-title-action-row">
+                <h2 id="detailTitle">Dynamic SQL query uses string interpolation</h2>
+                <button class="btn-explain-hdr" id="explainFindingBtn" type="button" title="Explain vulnerability with Local AI Security Advisor">
+                  <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  <span>⚡ Explain Advisory</span>
+                </button>
+              </div>
+
+              <!-- Row 3: File Location & Coordinates -->
+              <div class="cg-finding-meta">
+                <svg class="icon-xs text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <span class="loc-file" id="detailFileLocation">auth/login.py</span>
+                <span class="meta-dot">·</span>
+                <span class="loc-line" id="detailLineLocation">Line 12</span>
+                <!-- Hidden compatibility element for full coordinate string -->
+                <code class="is-hidden" id="detailLocation">auth/login.py:12</code>
+              </div>
+            </header>
+
+            <nav class="cg-detail-tabs inspector-nav" aria-label="Finding details" role="tablist">
+              <button class="is-active inspector-tab" id="tabOverview" type="button" role="tab" aria-selected="true" data-tab="analysis">Analysis</button>
+              <button class="inspector-tab" id="tabPatch" type="button" role="tab" aria-selected="false" data-tab="patch">Patch</button>
+              <button class="inspector-tab" id="tabTest" type="button" role="tab" aria-selected="false" data-tab="tests">Tests</button>
+            </nav>
+
+            <!-- Tab 1: Analysis & Remediation -->
+            <div class="inspector-panel" id="panelOverview" role="tabpanel">
+              <section class="cg-inspector-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <h3>Evidence</h3>
+                  <button class="btn-copy-sm" id="copyEvidenceBtn" type="button" title="Copy evidence to clipboard">
+                    <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    <span>Copy</span>
+                  </button>
+                </div>
+                <pre class="cg-code-evidence"><code id="detailEvidence"></code></pre>
+              </section>
+
+              <section class="cg-inspector-section">
+                <h3>Why this matters</h3>
+                <p id="detailDescription"></p>
+                <div class="exploit-box">
+                  <span class="exploit-label">Prerequisites &amp; Reachability:</span>
+                  <p class="field-text muted-text" id="detailExploit"></p>
+                </div>
+              </section>
+
+              <section class="cg-inspector-section">
+                <h3>Remediation</h3>
+                <p id="detailRemediation"></p>
+                <button class="btn-action" id="explainFindingSecondaryBtn" type="button" style="margin-top: 10px; width: 100%; justify-content: center; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; font-weight: 600; padding: 8px 14px;">
+                  <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  <span>⚡ Explain with Local AI Security Advisor</span>
+                </button>
+              </section>
+
+              <div class="cg-verification-status">
+                <span class="cg-status-dot"></span>
+                <span id="detailVerificationText">Proposed fix — not verified on host</span>
+              </div>
+            </div>
+
+            <!-- Tab 2: Candidate Patch -->
+            <div class="inspector-panel is-hidden" id="panelPatch" role="tabpanel">
+              <section class="cg-inspector-section">
+                <div class="inspector-meta-row">
+                  <span class="subtle-status" id="patchStatus">SUGGESTION ONLY</span>
+                </div>
+                <p class="field-text text-muted" id="patchMessage">Candidate unified patch. Validated in-memory against source.</p>
+                <div class="code-box is-hidden" id="patchCode" style="margin-top: 8px;">
+                  <pre class="cg-code-evidence"><code></code></pre>
+                </div>
+                <div class="inspector-actions" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button class="btn-action is-hidden" id="copyPatchButton" type="button">Copy Patch</button>
+                  <button class="btn-action is-hidden" id="verifyPatchButton" type="button">Verify Patch in Memory</button>
+                  <button class="btn-action is-hidden" id="applyPatchWorktreeButton" type="button" style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border-color: rgba(34, 197, 94, 0.3);" title="Create stash backup and apply patch to working tree">Apply to Worktree</button>
+                  <button class="btn-action is-hidden" id="revertPatchWorktreeButton" type="button" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3);" title="Revert applied patch from working tree">Revert from Worktree</button>
+                </div>
+                <pre class="test-run-output is-hidden" id="patchVerifyOutput" style="margin-top: 10px;"></pre>
+              </section>
+            </div>
+
+            <!-- Tab 3: Regression Test -->
+            <div class="inspector-panel is-hidden" id="panelTest" role="tabpanel">
+              <section class="cg-inspector-section">
+                <div class="inspector-meta-row" style="display: flex; justify-content: space-between;">
+                  <span class="subtle-status" id="testStatus">HOST SAFETY LOCK</span>
+                  <span class="test-framework" id="testMeta">Framework: pytest</span>
+                </div>
+                <p class="field-text text-muted" id="testDescription">Candidate test fixture. Must be executed in an isolated container.</p>
+                <div class="code-box is-hidden" id="testCode" style="margin-top: 8px;">
+                  <pre class="cg-code-evidence"><code></code></pre>
+                </div>
+                <div class="inspector-actions is-hidden" id="testActions" style="margin-top: 10px; display: flex; gap: 8px;">
+                  <button class="btn-action" id="copyTestButton" type="button">Copy Test</button>
+                  <button class="btn-primary-sm" id="runTestButton" type="button">Run in Sandbox</button>
+                </div>
+                <pre class="test-run-output is-hidden" id="testOutput" style="margin-top: 10px;"></pre>
+              </section>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Slide-Over Audit History Drawer
+         ═══════════════════════════════════════════════════════ -->
+    <aside class="drawer-panel is-hidden" id="historyDrawer" aria-label="Review History Drawer">
+      <div class="drawer-header">
+        <div class="drawer-title-row">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <h3>Audit History</h3>
+        </div>
+        <button class="drawer-close-btn" id="closeHistoryBtn" type="button" aria-label="Close History Drawer">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="drawer-body">
+        <div class="history-list" id="historyList">
+          <p class="placeholder">No audit history found.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Slide-Over Compliance Matrix Drawer
+         ═══════════════════════════════════════════════════════ -->
+    <aside class="drawer-panel is-hidden" id="complianceDrawer" aria-label="Compliance Matrix Drawer">
+      <div class="drawer-header">
+        <div class="drawer-title-row">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <h3>OWASP Top 10 Compliance</h3>
+        </div>
+        <button class="drawer-close-btn" id="closeComplianceBtn" type="button" aria-label="Close Compliance Drawer">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="drawer-body">
+        <div class="compliance-summary" id="complianceContent">
+          <p class="placeholder">Run a code review to generate an automated OWASP Top 10 &amp; CWE compliance audit matrix.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Slide-Over Security Policy Drawer
+         ═══════════════════════════════════════════════════════ -->
+    <aside class="drawer-panel is-hidden" id="policyDrawer" aria-label="Security Policy Configuration">
+      <div class="drawer-header">
+        <div class="drawer-title-row">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <h3>Security Policy & Rules</h3>
+        </div>
+        <button class="drawer-close-btn" id="closePolicyBtn" type="button" aria-label="Close Policy Drawer">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="drawer-body policy-form">
+        <div class="policy-field">
+          <label class="policy-label">Shannon Entropy Secret Threshold</label>
+          <div class="policy-slider-row">
+            <input type="range" class="policy-range" id="policyEntropyInput" min="3.0" max="6.0" step="0.1" value="4.5">
+            <span class="policy-slider-val" id="policyEntropyVal">4.5</span>
+          </div>
+          <span class="policy-hint">Minimum Shannon entropy required to trigger SEC-HIGH-ENTROPY-SECRET (Default: 4.5).</span>
+        </div>
+
+        <div class="policy-field">
+          <label class="policy-label">Excluded File Globs (comma-separated)</label>
+          <input type="text" class="policy-input" id="policyExcludeInput" placeholder="tests/*, docs/*, mocks/*">
+        </div>
+
+        <div class="policy-field">
+          <label class="policy-label">Ignored Rule IDs (comma-separated)</label>
+          <input type="text" class="policy-input" id="policyIgnoreInput" placeholder="SEC-BROKEN-CRYPTO, CWE-1104">
+        </div>
+
+        <div class="policy-field">
+          <label class="policy-label">CI/CD Gate on Critical / High</label>
+          <label class="policy-checkbox-row">
+            <input type="checkbox" id="policyGateCheckbox" checked>
+            <span>Block merge if Critical or High severity findings are detected</span>
+          </label>
+        </div>
+
+        <button class="btn-primary policy-submit-btn" id="savePolicyBtn" type="button">
+          Save Policy Configuration
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════════════════════
+         AI Vulnerability Explainer Modal
+         ═══════════════════════════════════════════════════════ -->
+    <div class="modal-backdrop is-hidden" id="explainModal" role="dialog" aria-modal="true" aria-labelledby="explainModalTitle">
+      <div class="explainer-modal-card">
+        <div class="modal-header">
+          <div class="explainer-modal-heading">
+            <span class="explainer-dot"></span>
+            <h3 id="explainModalTitle">Vulnerability Analysis & Exploit Advisory</h3>
+          </div>
+          <button class="modal-close-btn" id="closeExplainBtn" type="button" aria-label="Close Advisory">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="explainer-modal-body" id="explainModalBody">
+          <div class="explainer-meta-strip">
+            <span class="explainer-rule-id" id="explainModalFindingRule">CWE-89</span>
+            <span class="explainer-model-badge" id="explainModalModelBadge">Deterministic Security Advisor</span>
+          </div>
+
+          <div class="explainer-section">
+            <h4 class="explainer-section-title">Exploit Scenario & Attack Vector</h4>
+            <p class="explainer-section-text" id="explainExploitText"></p>
+          </div>
+
+          <div class="explainer-section">
+            <h4 class="explainer-section-title">Impact Assessment</h4>
+            <p class="explainer-section-text" id="explainImpactText"></p>
+          </div>
+
+          <div class="explainer-section">
+            <h4 class="explainer-section-title">Step-by-Step Remediation</h4>
+            <pre class="explainer-remediation-box" id="explainRemediationSteps"></pre>
+          </div>
+
+          <div class="explainer-section">
+            <h4 class="explainer-section-title">Defense-in-Depth Best Practices</h4>
+            <ul class="explainer-practices-list" id="explainBestPractices"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         Keyboard Shortcuts Modal
+         ═══════════════════════════════════════════════════════ -->
+    <div class="modal-backdrop is-hidden" id="shortcutsModal" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
+      <div class="shortcuts-card">
+        <div class="modal-header">
+          <h3 id="shortcutsModalTitle">Keyboard Shortcuts</h3>
+          <button class="modal-close-btn" id="closeShortcutsBtn" type="button" aria-label="Close Shortcuts">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="shortcuts-grid">
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Run Diff Review</span>
+            <span class="shortcut-keys"><kbd>Ctrl</kbd> + <kbd>↵</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Next / Previous Finding</span>
+            <span class="shortcut-keys"><kbd>j</kbd> / <kbd>k</kbd> or <kbd>↓</kbd> / <kbd>↑</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Focus Diff Search</span>
+            <span class="shortcut-keys"><kbd>/</kbd> or <kbd>f</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Toggle Changed Files Sidebar</span>
+            <span class="shortcut-keys"><kbd>b</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Toggle Soft Line Wrap</span>
+            <span class="shortcut-keys"><kbd>w</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Fetch Git Changes</span>
+            <span class="shortcut-keys"><kbd>g</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Switch Inspector Tabs</span>
+            <span class="shortcut-keys"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-desc">Close Modal / Popover / Search</span>
+            <span class="shortcut-keys"><kbd>Esc</kbd></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-banner" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/static/app.js?v=10"></script>
+</body>
+</html>

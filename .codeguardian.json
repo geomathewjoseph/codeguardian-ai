@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "ignore_rules": [],
+  "exclude_files": [],
+  "min_shannon_entropy": 4.5,
+  "fail_on_critical": true,
+  "custom_rules": []
+}

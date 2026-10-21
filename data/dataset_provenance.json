@@ -1,0 +1,19 @@
+{
+  "schema_version": "2.0.0",
+  "source": "CodeGuardian built-in synthetic seed scenarios",
+  "license": "Project-authored examples; not a security benchmark",
+  "train_scenario_ids": [
+    4,
+    5,
+    7,
+    8,
+    3,
+    6
+  ],
+  "validation_scenario_ids": [
+    1,
+    2
+  ],
+  "final_evaluation": "Not included. Maintain an independent, untouched evaluation set.",
+  "notes": "No scenario template is duplicated across the train/validation split."
+}
