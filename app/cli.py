@@ -27,7 +27,10 @@ def get_git_diff(staged_only: bool = False) -> str:
     if staged_only:
         args.append("--staged")
     try:
-        return subprocess.check_output(args, cwd=ROOT_DIR, stderr=subprocess.DEVNULL, text=True).strip()
+        out = subprocess.check_output(args, cwd=ROOT_DIR, stderr=subprocess.DEVNULL, text=True).strip()
+        if not out and not staged_only:
+            out = subprocess.check_output(["git", "diff", "--no-ext-diff", "--staged"], cwd=ROOT_DIR, stderr=subprocess.DEVNULL, text=True).strip()
+        return out
     except (OSError, subprocess.CalledProcessError):
         return ""
 
@@ -47,7 +50,7 @@ def install_pre_commit_hook(repo_dir: Optional[Path] = None) -> int:
         "#!/usr/bin/env bash\n"
         "# CodeGuardian Local Git Pre-Commit Security Gate\n"
         "echo \"[CodeGuardian] Running deterministic diff security scan...\"\n"
-        "python -m app.cli --git --fail-on-critical\n"
+        "python -m app.cli --staged --fail-on-critical\n"
         "EXIT_CODE=$?\n"
         "if [ $EXIT_CODE -ne 0 ]; then\n"
         "    echo \"[CodeGuardian] Commit blocked: Critical/High vulnerabilities detected.\"\n"
@@ -96,8 +99,8 @@ def review_cli(
     export_format: Optional[str] = None,
 ) -> int:
     if not diff_content.strip():
-        console.print("[bold red]No Git diff supplied or detected.[/bold red]")
-        return 2
+        console.print("[dim]No changes or empty Git diff detected. Repository is clean.[/dim]")
+        return 0
     try:
         report = analyze_diff(diff_content)
     except ValueError as exc:
@@ -156,7 +159,7 @@ def review_cli(
             sev_display += f"\n[yellow]CVSS {finding.cvss_score}[/yellow]"
         remediation_text = f"{finding.description}\n\nEvidence: {finding.evidence[0]}\n\n{finding.remediation}"
         if finding.suggested_fix:
-            remediation_text += "\n\n[bold green]✓ Grounded patch available (use UI or --export to view)[/bold green]"
+            remediation_text += "\n\n[bold green][+] Grounded patch available (use UI or --export to view)[/bold green]"
         table.add_row(
             sev_display,
             f"{finding.rule_id}\n{finding.file}:{finding.line_range}\n[dim]{finding.owasp_category or ''}[/dim]",

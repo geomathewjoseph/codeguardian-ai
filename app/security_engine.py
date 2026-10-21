@@ -27,7 +27,7 @@ from app.schemas import ComplianceItem, Finding, ReviewReport, SecurityPolicyCon
 
 HUNK_RE = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
 SQL_KEYWORD_RE = re.compile(r"\b(select|insert\s+into|update\s+\w+\s+set|delete\s+from)\b", re.IGNORECASE)
-DYNAMIC_INTERPOLATION_RE = re.compile(r"(?:f[\"']|\.format\(|%\s*\(?\s*\w+|\+\s*\w+)", re.IGNORECASE)
+DYNAMIC_INTERPOLATION_RE = re.compile(r"""(?:\bf["']|\.format\(|%\s*\(?\s*\w+|\+\s*\w+|\$\{[^}]+\})""", re.IGNORECASE)
 SECRET_RE = re.compile(
     r"^\s*(?:(?:const|let|var|final)\s+)?(?:(?:api|jwt|private|secret)[_-]?\w+|password)\s*=\s*[\"'][^\"'\n]{8,}[\"']\s*(?:#.*)?$",
     re.IGNORECASE,
@@ -36,20 +36,45 @@ AWS_KEY_RE = re.compile(r"\b(?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16}\b")
 GITHUB_PAT_RE = re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36}\b")
 SLACK_TOKEN_RE = re.compile(r"\bxox[baprs]-[0-9]{10,13}-[0-9]{10,13}[a-zA-Z0-9-]*\b")
 PRIVATE_KEY_RE = re.compile(r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----")
+OPENAI_KEY_RE = re.compile(r"\bsk-(?:proj-|live-)?[A-Za-z0-9_-]{32,}\b")
+ANTHROPIC_KEY_RE = re.compile(r"\bsk-ant-(?:api\d+-)[A-Za-z0-9_-]{32,}\b")
+HUGGINGFACE_KEY_RE = re.compile(r"\bhf_[A-Za-z0-9]{32,}\b")
+STRIPE_KEY_RE = re.compile(r"\b[sr]k_(?:live|test)_[0-9a-zA-Z]{24,}\b")
+DB_URI_SECRET_RE = re.compile(r"""\b(?:postgres(?:ql)?|mongodb(?:\+srv)?|mysql|redis|amqp|mssql):\/\/[^\s"'`]+:[^\s"'`]+@[^\s"'`]+\b""", re.IGNORECASE)
 ASSIGNMENT_TOKEN_RE = re.compile(
     r"""(?:token|key|secret|password|api[_-]?key|auth)\s*[:=]\s*["']([A-Za-z0-9+/=_\-]{20,})["']""",
     re.IGNORECASE,
 )
 PATH_INPUT_RE = re.compile(r"(?:pathlib?\.Path|os\.path\.join|path\.join|open)\([^\n]*(?:filename|user_path|destination|req\.(?:body|query)|request\.)", re.IGNORECASE)
-COMMAND_RE = re.compile(r"(?:os\.system|subprocess\.(?:run|Popen|call)|exec)\([^\n]*", re.IGNORECASE)
-DESERIALIZATION_RE = re.compile(r"\b(?:pickle|yaml)\.(?:loads|load)\s*\(", re.IGNORECASE)
+ZIP_SLIP_RE = re.compile(r"\b(?:tar|tarfile|zip|zipfile|ArchiveFile|archive)\b[^\n]*\.(?:extractall|extract)\s*\(", re.IGNORECASE)
+COMMAND_RE = re.compile(
+    r"(?:os\.(?:system|popen)|subprocess\.(?:run|Popen|call|check_output|check_call)|child_process\.(?:exec|execSync|spawn)|execSync|execFile|exec)\([^\n]*",
+    re.IGNORECASE,
+)
+DESERIALIZATION_RE = re.compile(
+    r"\b(?:pickle|_pickle|yaml|jsonpickle|dill|shelve)\.(?:loads?|decode|open)\s*\(|\btorch\.load\s*\(",
+    re.IGNORECASE,
+)
 SHELL_TRUE_RE = re.compile(r"\bshell\s*=\s*True\b")
 XSS_RE = re.compile(r"(?:dangerouslySetInnerHTML\s*=|innerHTML\s*=|document\.write\s*\(|v-html\s*=)", re.IGNORECASE)
-BROKEN_CRYPTO_RE = re.compile(r"\b(?:hashlib\.(?:md5|sha1)|crypto\.createHash\s*\(\s*['\"](?:md5|sha1)['\"]\)|DES\.new|ARC4\.new)\b", re.IGNORECASE)
+MARKUP_XSS_RE = re.compile(r"""(?:Markup|markupsafe\.Markup)\s*\([^\n]*(?:f["']|\+|\.format|%)""", re.IGNORECASE)
+BROKEN_CRYPTO_RE = re.compile(
+    r"\b(?:hashlib\.(?:md5|sha1)|crypto\.createHash\s*\(\s*['\"](?:md5|sha1)['\"]\)|DES\.new|ARC4\.new|AES\.MODE_ECB|modes\.ECB\(\)|Blowfish\.new)\b",
+    re.IGNORECASE,
+)
 DISABLED_TLS_RE = re.compile(r"\b(?:verify\s*=\s*False|rejectUnauthorized\s*:\s*false|InsecureSkipVerify\s*:\s*true|check_hostname\s*=\s*False)\b")
-SSRF_RE = re.compile(r"(?:requests\.(?:get|post|put|delete)|urllib\.request\.urlopen|axios\.(?:get|post)|fetch)\([^\n]*(?:req\.(?:query|params|body)|request\.(?:args|form)|user_url|target_url)", re.IGNORECASE)
-REDOS_RE = re.compile(r"(?:re\.compile|new RegExp)\s*\([^\n]*(?:\([^\)]*[\+\*]\)[\+\*]|\([^\)]*\|[^\)]*\)[\+\*])", re.IGNORECASE)
-CORS_WILDCARD_RE = re.compile(r"""(?:Access-Control-Allow-Origin["']?\s*[:=,]\s*["']\*|cors\s*\(\s*\{\s*origin\s*:\s*["']?\*)""", re.IGNORECASE)
+SSRF_RE = re.compile(
+    r"(?:requests\.(?:get|post|put|delete|request)|httpx\.(?:get|post|put|delete|request|Client|AsyncClient)|urllib\.request\.urlopen|axios\.(?:get|post)|fetch|client\.(?:get|post|put|delete)|session\.(?:get|post))\([^\n]*(?:req\.(?:query|params|body)|request\.(?:args|form|GET|POST)|user_url|target_url|webhook_url|callback_url|dest_url|destination_url|remote_url)",
+    re.IGNORECASE,
+)
+REDOS_RE = re.compile(
+    r"(?:re\.compile|new RegExp)\s*\([^\n]*(?:[\+\*]\s*[\)\}]{1,4}\s*[\+\*]|(?:\([^\)]*\|[^\)]*\)[\+\*]))",
+    re.IGNORECASE,
+)
+CORS_WILDCARD_RE = re.compile(
+    r"""(?:Access-Control-Allow-Origin["']?\s*[:=,]\s*["']\*|cors\s*\(\s*\{\s*origin\s*:\s*["']?\*|allow_origins\s*=\s*\[\s*["']\*["']\s*\])""",
+    re.IGNORECASE,
+)
 JWT_NONE_ALG_RE = re.compile(r"""(?:algorithms?\s*=\s*\[?["']none["']|verify_signature\s*=\s*False|algorithms?\s*:\s*\[?["']none["'])""", re.IGNORECASE)
 PROTOTYPE_POLLUTION_RE = re.compile(r"""(?:__proto__|constructor\s*\[\s*["']prototype["']\])""", re.IGNORECASE)
 XXE_RE = re.compile(r"""(?:xml\.etree\.ElementTree\.(?:parse|fromstring)|xml\.sax\.parse|minidom\.parse|lxml\.etree\.(?:parse|fromstring))\s*\(""", re.IGNORECASE)
@@ -58,7 +83,7 @@ INSECURE_TEMPFILE_RE = re.compile(r"""\btempfile\.mktemp\s*\(""", re.IGNORECASE)
 SECURITY_ASSERT_RE = re.compile(r"""^\s*assert\s+(?:user\.|token|role|is_admin|authenticated|authorized|permission)""", re.IGNORECASE)
 PERMISSIVE_CHMOD_RE = re.compile(r"""(?:os\.chmod|fs\.chmod)\s*\([^\n]*(?:0o?777|0777|0o?666)""", re.IGNORECASE)
 SSTI_RE = re.compile(
-    r"""(?:render_template_string\s*\(|jinja2\.Template\s*\(|Environment\([^\)]*\)\.from_string\s*\()[^\n]*(?:f["']|\+|\.format|%|\b(?:req|request|params|user_input)\b)""",
+    r"""(?:render_template_string\s*\(|jinja2\.Template\s*\(|Environment\([^\)]*\)\.from_string\s*\()[^\n]*(?:f["']|\+|\.format|%|\b(?:req|request|params|user_input|template|html|content)\b)""",
     re.IGNORECASE,
 )
 INSECURE_RANDOM_RE = re.compile(
@@ -370,7 +395,7 @@ def _rule_matches(line: str, filename: str = "") -> Iterable[tuple[str, str, str
             "HIGH",
             "Added SQL text appears to interpolate runtime values rather than bind parameters.",
         )
-    if COMMAND_RE.search(line) and (SHELL_TRUE_RE.search(line) or DYNAMIC_INTERPOLATION_RE.search(line) or "os.system" in line):
+    if COMMAND_RE.search(line) and (SHELL_TRUE_RE.search(line) or DYNAMIC_INTERPOLATION_RE.search(line) or any(k in line for k in ["os.system", "os.popen", "execSync", "child_process.exec"])):
         yield (
             "SEC-CMD-INJECTION",
             "CWE-78",
@@ -387,6 +412,15 @@ def _rule_matches(line: str, filename: str = "") -> Iterable[tuple[str, str, str
             "HIGH",
             "MEDIUM",
             "The added path operation includes a user-controlled filename or destination.",
+        )
+    if ZIP_SLIP_RE.search(line) and not any(safe in line.lower() for safe in ["filter='data'", "filter=\"data\"", "safe_extract"]):
+        yield (
+            "SEC-PATH-TRAVERSAL",
+            "CWE-22",
+            "Archive extraction without path traversal protection (Zip/Tar Slip)",
+            "HIGH",
+            "HIGH",
+            "extractall() on unvalidated archives allows filenames with '../' to overwrite arbitrary files on disk (CVE-2007-4559).",
         )
     if SECRET_RE.search(line):
         yield (
@@ -424,6 +458,51 @@ def _rule_matches(line: str, filename: str = "") -> Iterable[tuple[str, str, str
             "HIGH",
             "A Slack API bearer token pattern was committed in an added line.",
         )
+    if OPENAI_KEY_RE.search(line):
+        yield (
+            "SEC-HARDCODED-SECRET",
+            "CWE-798",
+            "Potential hardcoded OpenAI API key committed in source",
+            "CRITICAL",
+            "HIGH",
+            "An OpenAI API key pattern was committed directly in source control.",
+        )
+    if ANTHROPIC_KEY_RE.search(line):
+        yield (
+            "SEC-HARDCODED-SECRET",
+            "CWE-798",
+            "Potential hardcoded Anthropic API key committed in source",
+            "CRITICAL",
+            "HIGH",
+            "An Anthropic API key pattern was committed directly in source control.",
+        )
+    if HUGGINGFACE_KEY_RE.search(line):
+        yield (
+            "SEC-HARDCODED-SECRET",
+            "CWE-798",
+            "Potential hardcoded HuggingFace token committed in source",
+            "HIGH",
+            "HIGH",
+            "A HuggingFace access token pattern was committed directly in source control.",
+        )
+    if STRIPE_KEY_RE.search(line):
+        yield (
+            "SEC-HARDCODED-SECRET",
+            "CWE-798",
+            "Potential hardcoded Stripe secret API key committed in source",
+            "CRITICAL",
+            "HIGH",
+            "A Stripe API secret key pattern was committed directly in source control.",
+        )
+    if DB_URI_SECRET_RE.search(line):
+        yield (
+            "SEC-HARDCODED-SECRET",
+            "CWE-798",
+            "Plaintext database credentials exposed in connection URI",
+            "CRITICAL",
+            "HIGH",
+            "A database connection URI with embedded plaintext username and password was committed to source control.",
+        )
     if PRIVATE_KEY_RE.search(line):
         yield (
             "SEC-HARDCODED-SECRET",
@@ -445,15 +524,26 @@ def _rule_matches(line: str, filename: str = "") -> Iterable[tuple[str, str, str
                 "HIGH",
                 f"A high-entropy literal ({len(token_candidate)} chars) was assigned to a credential-like identifier.",
             )
-    if DESERIALIZATION_RE.search(line) and ("yaml.load" in line or "pickle" in line):
-        yield (
-            "SEC-INSECURE-DESERIALIZATION",
-            "CWE-502",
-            "Unsafe deserialization of potentially untrusted data",
-            "HIGH",
-            "MEDIUM",
-            "The added line invokes a deserializer that can construct attacker-controlled objects.",
-        )
+    if DESERIALIZATION_RE.search(line):
+        if "torch.load" in line:
+            if "weights_only=True" not in line or "weights_only=False" in line:
+                yield (
+                    "SEC-INSECURE-DESERIALIZATION",
+                    "CWE-502",
+                    "Unsafe PyTorch checkpoint loading via torch.load without weights_only lock",
+                    "CRITICAL",
+                    "HIGH",
+                    "torch.load() executes arbitrary pickle bytecodes unless weights_only=True is explicitly enforced.",
+                )
+        elif "yaml.safe_load" not in line:
+            yield (
+                "SEC-INSECURE-DESERIALIZATION",
+                "CWE-502",
+                "Unsafe deserialization of potentially untrusted data",
+                "HIGH",
+                "MEDIUM",
+                "The added line invokes a deserializer that can construct attacker-controlled objects.",
+            )
     if XSS_RE.search(line):
         yield (
             "SEC-XSS",
@@ -462,6 +552,15 @@ def _rule_matches(line: str, filename: str = "") -> Iterable[tuple[str, str, str
             "HIGH",
             "HIGH",
             "Raw unescaped HTML or markup is directly assigned to the DOM, potentially allowing script injection.",
+        )
+    if MARKUP_XSS_RE.search(line):
+        yield (
+            "SEC-XSS",
+            "CWE-79",
+            "Unescaped HTML markup constructed dynamically via Markup()",
+            "HIGH",
+            "HIGH",
+            "Markup() disables template auto-escaping. Dynamic string formatting within Markup can lead to Cross-Site Scripting (XSS).",
         )
     if BROKEN_CRYPTO_RE.search(line):
         yield (

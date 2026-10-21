@@ -845,6 +845,108 @@ diff --git a/src/core.py b/src/core.py
         self.assertIsNotNone(cmd_finding)
         self.assertTrue(any("test_command_injection" in t.name for t in cmd_finding.related_tests))
 
+    def test_hard_challenge_pytorch_unsafe_model_load(self):
+        diff = """diff --git a/ml/pipeline.py b/ml/pipeline.py
+--- a/ml/pipeline.py
++++ b/ml/pipeline.py
+@@ -1,1 +1,4 @@
++def load_weights(path):
++    return torch.load(path, weights_only=False)
++"""
+        report = analyze_diff(diff)
+        finding = next((f for f in report.findings if f.rule_id == "CWE-502"), None)
+        self.assertIsNotNone(finding)
+        self.assertEqual(finding.severity, "CRITICAL")
+        self.assertIn("torch.load", finding.title)
+
+    def test_hard_challenge_command_injection_variants_and_nodejs(self):
+        diff = """diff --git a/build/deploy.js b/build/deploy.js
+--- a/build/deploy.js
++++ b/build/deploy.js
+@@ -1,1 +1,4 @@
++function deploy(target) {
++    const result = execSync(`git checkout ${target}`);
++}
++"""
+        report = analyze_diff(diff)
+        finding = next((f for f in report.findings if f.rule_id == "CWE-78"), None)
+        self.assertIsNotNone(finding)
+        self.assertEqual(finding.severity, "CRITICAL")
+
+    def test_hard_challenge_modern_cloud_secrets_and_db_uri(self):
+        diff = """diff --git a/config.py b/config.py
+--- a/config.py
++++ b/config.py
+@@ -1,1 +1,5 @@
++openai_key = "sk-proj-1234567890abcdef1234567890abcdef12345678"
++db_uri = "postgresql://superuser:P@ssword123@prod-cluster.internal:5432/main"
++"""
+        report = analyze_diff(diff)
+        cwe_798 = [f for f in report.findings if f.rule_id == "CWE-798"]
+        self.assertGreaterEqual(len(cwe_798), 2)
+        self.assertTrue(any("OpenAI" in f.title for f in cwe_798))
+        self.assertTrue(any("database credentials" in f.title for f in cwe_798))
+
+    def test_hard_challenge_ssrf_webhook_dispatcher(self):
+        diff = """diff --git a/services/webhook.py b/services/webhook.py
+--- a/services/webhook.py
++++ b/services/webhook.py
+@@ -1,1 +1,4 @@
++async def send_hook(webhook_url, payload):
++    await client.post(webhook_url, json=payload)
++"""
+        report = analyze_diff(diff)
+        finding = next((f for f in report.findings if f.rule_id == "CWE-918"), None)
+        self.assertIsNotNone(finding)
+        self.assertEqual(finding.severity, "HIGH")
+
+    def test_hard_challenge_archive_zip_slip_traversal(self):
+        diff = """diff --git a/archive.py b/archive.py
+--- a/archive.py
++++ b/archive.py
+@@ -1,1 +1,4 @@
++def unpack(bundle):
++    tarfile.open(bundle).extractall(path="/dest")
++"""
+        report = analyze_diff(diff)
+        finding = next((f for f in report.findings if f.rule_id == "CWE-22" and "Zip/Tar Slip" in f.title), None)
+        self.assertIsNotNone(finding)
+        self.assertEqual(finding.severity, "HIGH")
+
+    def test_hard_challenge_crypto_aes_ecb_mode(self):
+        diff = """diff --git a/sec.py b/sec.py
+--- a/sec.py
++++ b/sec.py
+@@ -1,1 +1,4 @@
++def encrypt(data, key):
++    return AES.new(key, AES.MODE_ECB).encrypt(data)
++"""
+        report = analyze_diff(diff)
+        finding = next((f for f in report.findings if f.rule_id == "CWE-327"), None)
+        self.assertIsNotNone(finding)
+
+    def test_hard_challenge_fastapi_cors_wildcard_and_redos(self):
+        diff = """diff --git a/server.py b/server.py
+--- a/server.py
++++ b/server.py
+@@ -1,1 +1,5 @@
++app.add_middleware(CORSMiddleware, allow_origins=["*"])
++regex = re.compile(r"^([a-z]+)+$")
++"""
+        report = analyze_diff(diff)
+        cors_f = next((f for f in report.findings if f.rule_id == "CWE-942"), None)
+        redos_f = next((f for f in report.findings if f.rule_id == "CWE-1333"), None)
+        self.assertIsNotNone(cors_f)
+        self.assertIsNotNone(redos_f)
+
+    def test_presets_expanded_suite(self):
+        presets = self.client.get("/api/presets").json()
+        self.assertGreaterEqual(len(presets), 10)
+        self.assertIn("pytorch_unsafe_deserialization", presets)
+        self.assertIn("cloud_secrets_leak", presets)
+        self.assertIn("command_injection", presets)
+        self.assertIn("ssrf_webhook", presets)
+
 
 if __name__ == "__main__":
     unittest.main()

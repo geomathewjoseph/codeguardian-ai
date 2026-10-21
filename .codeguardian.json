@@ -1,7 +1,14 @@
 {
   "version": "1.0.0",
   "ignore_rules": [],
-  "exclude_files": [],
+  "exclude_files": [
+    "*tests/*",
+    "tests/*",
+    "data/fixture_presets.json",
+    "*data/fixture_presets.json*",
+    "scripts/evaluate_hard_challenges.py",
+    "*evaluate_hard_challenges*"
+  ],
   "min_shannon_entropy": 4.5,
   "fail_on_critical": true,
   "custom_rules": []

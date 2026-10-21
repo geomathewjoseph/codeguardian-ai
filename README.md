@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/PyTorch-2.x%20CUDA-EE4C2C?style=flat-square&logo=pytorch&logoColor=white" alt="PyTorch" />
   <img src="https://img.shields.io/badge/QLoRA-4--bit%20NF4-792EE5?style=flat-square" alt="QLoRA" />
   <img src="https://img.shields.io/badge/Hardware-RTX%205060%208GB%20%2B%2024GB%20RAM-76B900?style=flat-square&logo=nvidia&logoColor=white" alt="NVIDIA" />
-  <img src="https://img.shields.io/badge/Tests-70%2F70%20Passing-success?style=flat-square" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-78%2F78%20Passing-success?style=flat-square" alt="Tests" />
   <img src="https://img.shields.io/badge/Security-Zero%20Telemetry%20Egress-blue?style=flat-square" alt="Zero Egress" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
 </p>
@@ -81,7 +81,7 @@ CodeGuardian solves this dilemma via a **hybrid multi-stage pipeline**:
 
 ## ✨ Key Features
 
-- ⚡ **Zero-Latency Deterministic Scanning**: Scans diffs in under 50ms with zero hallucination across 22 specialized CWE detection rules.
+- ⚡ **Zero-Latency Deterministic Scanning**: Scans diffs in under 50ms with zero hallucination across 25+ specialized CWE detection rules.
 - 🎯 **Grounded Line Locations**: Every vulnerability finding is strictly bounded to the new-file coordinates of changed hunks.
 - 📊 **CVSS v3.1 Quantitative Scoring**: Maps industry-standard CVSS v3.1 base scores (0.0–10.0) and full metric vector strings to every finding, tracking report-level average and peak risk metrics.
 - 🔧 **Grounded Unified Auto-Patch Synthesizer**: Generates unambiguous, deterministic unified diff patches for deterministic fixes (TLS verification, cipher upgrades, safe tempfiles, chmod 0o600, secret extraction, cryptographically secure randomness).
@@ -825,7 +825,7 @@ Open your browser to `http://127.0.0.1:8000` to interact with the web interface.
 ### 4. Running the Complete Test Suite
 ```powershell
 python -m pytest tests/ -v
-# Validates all 70 comprehensive functional, security boundary, policy, and compliance tests
+# Validates all 78 comprehensive functional, security boundary, policy, and compliance tests
 ```
 
 ---
@@ -894,7 +894,7 @@ llm fine tuning/
 ├── export/
 │   └── export_model.py         # Full-precision merger & Ollama Modelfile generator
 ├── tests/
-│   ├── test_functional_and_edge_cases.py  # 61 comprehensive functional & security tests
+│   ├── test_functional_and_edge_cases.py  # 69 comprehensive functional & security tests
 │   └── test_review_pipeline.py            # 9 core review pipeline tests
 ├── training/
 │   ├── test_inference.py       # Inference comparison harness (Base vs LoRA)
@@ -915,7 +915,7 @@ llm fine tuning/
 2. **Match Evaluation**: Add a yield block in `_rule_matches(line: str)`.
 3. **Remediation**: Add guidance and patch withholding rationale in `_remediation(rule: str)`.
 4. **Test Case**: Add verification tests in `tests/test_functional_and_edge_cases.py`.
-5. **Run Verification**: Ensure all 70 tests pass with `python -m pytest tests/ -v`.
+5. **Run Verification**: Ensure all 78 tests pass with `python -m pytest tests/ -v`.
 
 ---
 

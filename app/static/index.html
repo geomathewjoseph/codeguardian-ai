@@ -261,10 +261,26 @@
           <div class="cg-toolbar-group">
             <div class="fixture-select-wrap">
               <select id="fixtureSelect" aria-label="Review example" title="Load an example diff fixture">
-                <option value="">Examples</option>
-                <option value="sql_injection">SQL injection</option>
-                <option value="path_traversal">Path traversal</option>
-                <option value="clean_refactor">Clean refactor</option>
+                <option value="">Select Scenario…</option>
+                <optgroup label="Web & API Security">
+                  <option value="sql_injection">SQL Injection (Python auth/login.py)</option>
+                  <option value="path_traversal">Path Traversal (TS file_upload.ts)</option>
+                  <option value="ssrf_webhook">SSRF in Webhook (Python/httpx)</option>
+                  <option value="ssti_template_injection">SSTI Template Injection (Flask)</option>
+                </optgroup>
+                <optgroup label="System & Command Injection">
+                  <option value="command_injection">Command Injection (Python subprocess)</option>
+                  <option value="nodejs_child_process">Node.js Exec Injection (JS deploy.js)</option>
+                  <option value="archive_zip_slip">Tar/Zip Slip Traversal (Python tarfile)</option>
+                </optgroup>
+                <optgroup label="AI, Secrets & Cryptography">
+                  <option value="pytorch_unsafe_deserialization">Unsafe PyTorch Load (torch.load)</option>
+                  <option value="cloud_secrets_leak">Cloud & AI API Keys (OpenAI, Stripe, DB)</option>
+                  <option value="crypto_weakness">AES ECB Mode (Python Crypto)</option>
+                </optgroup>
+                <optgroup label="Clean Baseline">
+                  <option value="clean_refactor">Clean Refactor (Go string_helpers.go)</option>
+                </optgroup>
               </select>
             </div>
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -68,48 +69,19 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # Fixtures are explicitly labelled as examples and are never substituted for a
 # missing local Git diff.
-FIXTURE_PRESETS = {
-    "sql_injection": """diff --git a/auth/login.py b/auth/login.py
-index 45a1c2..89f3e1 100644
---- a/auth/login.py
-+++ b/auth/login.py
-@@ -12,4 +12,6 @@ def authenticate_user(db, username, password):
--    user = db.users.find_one({\"username\": username})
--    if user and bcrypt.checkpw(password.encode(), user[\"password_hash\"]):
--        return create_jwt_token(user[\"id\"])
-+    query = f\"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'\"
-+    user = db.execute(query).fetchone()
-+    if user:
-+        return create_jwt_token(user['id'])
-     return None
-""",
-    "path_traversal": """diff --git a/api/handlers/file_upload.ts b/api/handlers/file_upload.ts
-index e991a0..112bc4 100644
---- a/api/handlers/file_upload.ts
-+++ b/api/handlers/file_upload.ts
-@@ -15,5 +15,5 @@ export async function handleUpload(req: Request, res: Response) {
--  const safeFilename = path.basename(req.file.originalname).replace(/[^a-zA-Z0-9._-]/g, '');
--  const dest = path.join('/var/app/uploads', safeFilename);
-+  const targetPath = req.body.destination || '/var/app/uploads';
-+  const dest = path.join(targetPath, req.file.originalname);
-   await fs.promises.writeFile(dest, req.file.buffer);
-   return res.json({ status: 'ok', path: dest });
- }
-""",
-    "clean_refactor": """diff --git a/utils/string_helpers.go b/utils/string_helpers.go
-index 10a8fc..44e892 100644
---- a/utils/string_helpers.go
-+++ b/utils/string_helpers.go
-@@ -8,7 +8,3 @@ func ConcatTokens(tokens []string) string {
--    var res string
--    for _, t := range tokens {
--        res += t + \",\"
--    }
--    return strings.TrimSuffix(res, \",\")
-+    return strings.Join(tokens, \",\")
- }
-""",
-}
+FIXTURE_PRESETS_FILE = ROOT_DIR / "data" / "fixture_presets.json"
+
+
+def load_fixture_presets() -> dict[str, str]:
+    if FIXTURE_PRESETS_FILE.is_file():
+        try:
+            return json.loads(FIXTURE_PRESETS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+
+FIXTURE_PRESETS = load_fixture_presets()
 
 
 def _run_git(*args: str) -> Optional[str]:
