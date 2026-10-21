@@ -22,14 +22,15 @@ console = Console()
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 
-def get_git_diff(staged_only: bool = False) -> str:
+def get_git_diff(staged_only: bool = False, repo_dir: Optional[Path] = None) -> str:
+    target_dir = repo_dir or Path.cwd()
     args = ["git", "diff", "--no-ext-diff"]
     if staged_only:
         args.append("--staged")
     try:
-        out = subprocess.check_output(args, cwd=ROOT_DIR, stderr=subprocess.DEVNULL, text=True).strip()
+        out = subprocess.check_output(args, cwd=target_dir, stderr=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace").strip()
         if not out and not staged_only:
-            out = subprocess.check_output(["git", "diff", "--no-ext-diff", "--staged"], cwd=ROOT_DIR, stderr=subprocess.DEVNULL, text=True).strip()
+            out = subprocess.check_output(["git", "diff", "--no-ext-diff", "--staged"], cwd=target_dir, stderr=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace").strip()
         return out
     except (OSError, subprocess.CalledProcessError):
         return ""
@@ -46,11 +47,14 @@ def install_pre_commit_hook(repo_dir: Optional[Path] = None) -> int:
     hooks_dir.mkdir(parents=True, exist_ok=True)
     hook_script = hooks_dir / "pre-commit"
 
+    python_exec = sys.executable.replace("\\", "/")
+    root_str = str(ROOT_DIR).replace("\\", "/")
+
     script_content = (
         "#!/usr/bin/env bash\n"
         "# CodeGuardian Local Git Pre-Commit Security Gate\n"
         "echo \"[CodeGuardian] Running deterministic diff security scan...\"\n"
-        "python -m app.cli --staged --fail-on-critical\n"
+        f"\"{python_exec}\" -c \"import sys; sys.path.insert(0, '{root_str}'); from app.cli import main; sys.exit(main())\" --staged --fail-on-critical\n"
         "EXIT_CODE=$?\n"
         "if [ $EXIT_CODE -ne 0 ]; then\n"
         "    echo \"[CodeGuardian] Commit blocked: Critical/High vulnerabilities detected.\"\n"

@@ -7,7 +7,9 @@
     "data/fixture_presets.json",
     "*data/fixture_presets.json*",
     "scripts/evaluate_hard_challenges.py",
-    "*evaluate_hard_challenges*"
+    "*evaluate_hard_challenges*",
+    "scripts/run_real_cve_benchmark.py",
+    "*run_real_cve_benchmark*"
   ],
   "min_shannon_entropy": 4.5,
   "fail_on_critical": true,

@@ -46,7 +46,7 @@ ASSIGNMENT_TOKEN_RE = re.compile(
     re.IGNORECASE,
 )
 PATH_INPUT_RE = re.compile(r"(?:pathlib?\.Path|os\.path\.join|path\.join|open)\([^\n]*(?:filename|user_path|destination|req\.(?:body|query)|request\.)", re.IGNORECASE)
-ZIP_SLIP_RE = re.compile(r"\b(?:tar|tarfile|zip|zipfile|ArchiveFile|archive)\b[^\n]*\.(?:extractall|extract)\s*\(", re.IGNORECASE)
+ZIP_SLIP_RE = re.compile(r"(?:\b\w+|\))\.(?:extractall|extract)\s*\(", re.IGNORECASE)
 COMMAND_RE = re.compile(
     r"(?:os\.(?:system|popen)|subprocess\.(?:run|Popen|call|check_output|check_call)|child_process\.(?:exec|execSync|spawn)|execSync|execFile|exec)\([^\n]*",
     re.IGNORECASE,
@@ -68,7 +68,7 @@ SSRF_RE = re.compile(
     re.IGNORECASE,
 )
 REDOS_RE = re.compile(
-    r"(?:re\.compile|new RegExp)\s*\([^\n]*(?:[\+\*]\s*[\)\}]{1,4}\s*[\+\*]|(?:\([^\)]*\|[^\)]*\)[\+\*]))",
+    r"(?:re\.(?:compile|match|search|sub|findall)|new RegExp|RegExp)\s*\([^\n]*(?:[\+\*]\s*[\)\}]{1,4}\s*[\+\*]|(?:\([^\)]*\|[^\)]*\)[\+\*]))",
     re.IGNORECASE,
 )
 CORS_WILDCARD_RE = re.compile(

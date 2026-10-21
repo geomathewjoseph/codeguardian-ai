@@ -1,5 +1,996 @@
 [
   {
+    "id": "REV-1792603816",
+    "timestamp": "2026-10-21 23:00:16",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:30:16.906797+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603816",
+    "timestamp": "2026-10-21 23:00:16",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "REQUEST_CHANGES",
+    "risk_level": "CRITICAL",
+    "counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 1,
+    "duration_ms": 0,
+    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+      "risk_level": "CRITICAL",
+      "verdict": "REQUEST_CHANGES",
+      "counts": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [
+        {
+          "id": "SEC-SQLI-001",
+          "rule_id": "CWE-89",
+          "title": "Dynamic SQL query uses string interpolation",
+          "category": "SECURITY",
+          "severity": "CRITICAL",
+          "confidence": "HIGH",
+          "file": "auth/login.py",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence": [],
+          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
+          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
+          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
+          "suggested_fix": null,
+          "cwe_id": "CWE-89",
+          "owasp_category": "A03:2021-Injection",
+          "cvss_score": 9.8,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "patch_status": "SUGGESTION_ONLY",
+          "provenance": "DETERMINISTIC_SCANNER",
+          "related_tests": [
+            {
+              "name": "test_sql_injection_payload_is_rejected",
+              "framework": "pytest",
+              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+              "code": "",
+              "status": "GENERATED",
+              "execution_output": null
+            }
+          ]
+        }
+      ],
+      "compliance_matrix": [
+        {
+          "standard": "OWASP_TOP_10",
+          "category_id": "A03:2021",
+          "title": "Injection",
+          "finding_ids": [
+            "SEC-SQLI-001"
+          ],
+          "count": 1
+        }
+      ],
+      "average_cvss": 9.8,
+      "max_cvss": 9.8,
+      "unit_tests": [
+        {
+          "name": "test_sql_injection_payload_is_rejected",
+          "framework": "pytest",
+          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+          "code": "",
+          "status": "GENERATED",
+          "execution_output": null
+        }
+      ],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:30:16.886343+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603816",
+    "timestamp": "2026-10-21 23:00:16",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "REQUEST_CHANGES",
+    "risk_level": "CRITICAL",
+    "counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 1,
+    "duration_ms": 0,
+    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+      "risk_level": "CRITICAL",
+      "verdict": "REQUEST_CHANGES",
+      "counts": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [
+        {
+          "id": "SEC-SQLI-001",
+          "rule_id": "CWE-89",
+          "title": "Dynamic SQL query uses string interpolation",
+          "category": "SECURITY",
+          "severity": "CRITICAL",
+          "confidence": "HIGH",
+          "file": "auth/login.py",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence": [],
+          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
+          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
+          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
+          "suggested_fix": null,
+          "cwe_id": "CWE-89",
+          "owasp_category": "A03:2021-Injection",
+          "cvss_score": 9.8,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "patch_status": "SUGGESTION_ONLY",
+          "provenance": "DETERMINISTIC_SCANNER",
+          "related_tests": [
+            {
+              "name": "test_sql_injection_payload_is_rejected",
+              "framework": "pytest",
+              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+              "code": "",
+              "status": "GENERATED",
+              "execution_output": null
+            }
+          ]
+        }
+      ],
+      "compliance_matrix": [
+        {
+          "standard": "OWASP_TOP_10",
+          "category_id": "A03:2021",
+          "title": "Injection",
+          "finding_ids": [
+            "SEC-SQLI-001"
+          ],
+          "count": 1
+        }
+      ],
+      "average_cvss": 9.8,
+      "max_cvss": 9.8,
+      "unit_tests": [
+        {
+          "name": "test_sql_injection_payload_is_rejected",
+          "framework": "pytest",
+          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+          "code": "",
+          "status": "GENERATED",
+          "execution_output": null
+        }
+      ],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:30:16.863568+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603816",
+    "timestamp": "2026-10-21 23:00:16",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "REQUEST_CHANGES",
+    "risk_level": "CRITICAL",
+    "counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 1,
+    "duration_ms": 0,
+    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+      "risk_level": "CRITICAL",
+      "verdict": "REQUEST_CHANGES",
+      "counts": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [
+        {
+          "id": "SEC-SQLI-001",
+          "rule_id": "CWE-89",
+          "title": "Dynamic SQL query uses string interpolation",
+          "category": "SECURITY",
+          "severity": "CRITICAL",
+          "confidence": "HIGH",
+          "file": "auth/login.py",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence": [],
+          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
+          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
+          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
+          "suggested_fix": null,
+          "cwe_id": "CWE-89",
+          "owasp_category": "A03:2021-Injection",
+          "cvss_score": 9.8,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "patch_status": "SUGGESTION_ONLY",
+          "provenance": "DETERMINISTIC_SCANNER",
+          "related_tests": [
+            {
+              "name": "test_sql_injection_payload_is_rejected",
+              "framework": "pytest",
+              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+              "code": "",
+              "status": "GENERATED",
+              "execution_output": null
+            }
+          ]
+        }
+      ],
+      "compliance_matrix": [
+        {
+          "standard": "OWASP_TOP_10",
+          "category_id": "A03:2021",
+          "title": "Injection",
+          "finding_ids": [
+            "SEC-SQLI-001"
+          ],
+          "count": 1
+        }
+      ],
+      "average_cvss": 9.8,
+      "max_cvss": 9.8,
+      "unit_tests": [
+        {
+          "name": "test_sql_injection_payload_is_rejected",
+          "framework": "pytest",
+          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+          "code": "",
+          "status": "GENERATED",
+          "execution_output": null
+        }
+      ],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:30:16.840293+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603816",
+    "timestamp": "2026-10-21 23:00:16",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "api/handlers/file_upload.ts"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:30:16.809356+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603816",
+    "timestamp": "2026-10-21 23:00:16",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "utils/string_helpers.go"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:30:16.786713+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603816",
+    "timestamp": "2026-10-21 23:00:16",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "utils/string_helpers.go"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:30:16.027792+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603777",
+    "timestamp": "2026-10-21 22:59:37",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:29:37.287146+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603777",
+    "timestamp": "2026-10-21 22:59:37",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "REQUEST_CHANGES",
+    "risk_level": "CRITICAL",
+    "counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 1,
+    "duration_ms": 0,
+    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+      "risk_level": "CRITICAL",
+      "verdict": "REQUEST_CHANGES",
+      "counts": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [
+        {
+          "id": "SEC-SQLI-001",
+          "rule_id": "CWE-89",
+          "title": "Dynamic SQL query uses string interpolation",
+          "category": "SECURITY",
+          "severity": "CRITICAL",
+          "confidence": "HIGH",
+          "file": "auth/login.py",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence": [],
+          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
+          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
+          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
+          "suggested_fix": null,
+          "cwe_id": "CWE-89",
+          "owasp_category": "A03:2021-Injection",
+          "cvss_score": 9.8,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "patch_status": "SUGGESTION_ONLY",
+          "provenance": "DETERMINISTIC_SCANNER",
+          "related_tests": [
+            {
+              "name": "test_sql_injection_payload_is_rejected",
+              "framework": "pytest",
+              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+              "code": "",
+              "status": "GENERATED",
+              "execution_output": null
+            }
+          ]
+        }
+      ],
+      "compliance_matrix": [
+        {
+          "standard": "OWASP_TOP_10",
+          "category_id": "A03:2021",
+          "title": "Injection",
+          "finding_ids": [
+            "SEC-SQLI-001"
+          ],
+          "count": 1
+        }
+      ],
+      "average_cvss": 9.8,
+      "max_cvss": 9.8,
+      "unit_tests": [
+        {
+          "name": "test_sql_injection_payload_is_rejected",
+          "framework": "pytest",
+          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+          "code": "",
+          "status": "GENERATED",
+          "execution_output": null
+        }
+      ],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:29:37.267578+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603777",
+    "timestamp": "2026-10-21 22:59:37",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "REQUEST_CHANGES",
+    "risk_level": "CRITICAL",
+    "counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 1,
+    "duration_ms": 0,
+    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+      "risk_level": "CRITICAL",
+      "verdict": "REQUEST_CHANGES",
+      "counts": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [
+        {
+          "id": "SEC-SQLI-001",
+          "rule_id": "CWE-89",
+          "title": "Dynamic SQL query uses string interpolation",
+          "category": "SECURITY",
+          "severity": "CRITICAL",
+          "confidence": "HIGH",
+          "file": "auth/login.py",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence": [],
+          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
+          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
+          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
+          "suggested_fix": null,
+          "cwe_id": "CWE-89",
+          "owasp_category": "A03:2021-Injection",
+          "cvss_score": 9.8,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "patch_status": "SUGGESTION_ONLY",
+          "provenance": "DETERMINISTIC_SCANNER",
+          "related_tests": [
+            {
+              "name": "test_sql_injection_payload_is_rejected",
+              "framework": "pytest",
+              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+              "code": "",
+              "status": "GENERATED",
+              "execution_output": null
+            }
+          ]
+        }
+      ],
+      "compliance_matrix": [
+        {
+          "standard": "OWASP_TOP_10",
+          "category_id": "A03:2021",
+          "title": "Injection",
+          "finding_ids": [
+            "SEC-SQLI-001"
+          ],
+          "count": 1
+        }
+      ],
+      "average_cvss": 9.8,
+      "max_cvss": 9.8,
+      "unit_tests": [
+        {
+          "name": "test_sql_injection_payload_is_rejected",
+          "framework": "pytest",
+          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+          "code": "",
+          "status": "GENERATED",
+          "execution_output": null
+        }
+      ],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:29:37.248347+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603777",
+    "timestamp": "2026-10-21 22:59:37",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "REQUEST_CHANGES",
+    "risk_level": "CRITICAL",
+    "counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 1,
+    "duration_ms": 0,
+    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+      "risk_level": "CRITICAL",
+      "verdict": "REQUEST_CHANGES",
+      "counts": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [
+        {
+          "id": "SEC-SQLI-001",
+          "rule_id": "CWE-89",
+          "title": "Dynamic SQL query uses string interpolation",
+          "category": "SECURITY",
+          "severity": "CRITICAL",
+          "confidence": "HIGH",
+          "file": "auth/login.py",
+          "line_start": 12,
+          "line_end": 12,
+          "evidence": [],
+          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
+          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
+          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
+          "suggested_fix": null,
+          "cwe_id": "CWE-89",
+          "owasp_category": "A03:2021-Injection",
+          "cvss_score": 9.8,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "patch_status": "SUGGESTION_ONLY",
+          "provenance": "DETERMINISTIC_SCANNER",
+          "related_tests": [
+            {
+              "name": "test_sql_injection_payload_is_rejected",
+              "framework": "pytest",
+              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+              "code": "",
+              "status": "GENERATED",
+              "execution_output": null
+            }
+          ]
+        }
+      ],
+      "compliance_matrix": [
+        {
+          "standard": "OWASP_TOP_10",
+          "category_id": "A03:2021",
+          "title": "Injection",
+          "finding_ids": [
+            "SEC-SQLI-001"
+          ],
+          "count": 1
+        }
+      ],
+      "average_cvss": 9.8,
+      "max_cvss": 9.8,
+      "unit_tests": [
+        {
+          "name": "test_sql_injection_payload_is_rejected",
+          "framework": "pytest",
+          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
+          "code": "",
+          "status": "GENERATED",
+          "execution_output": null
+        }
+      ],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "auth/login.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:29:37.225007+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603777",
+    "timestamp": "2026-10-21 22:59:37",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "api/handlers/file_upload.ts"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:29:37.193231+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603777",
+    "timestamp": "2026-10-21 22:59:37",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "utils/string_helpers.go"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:29:37.171265+00:00"
+    }
+  },
+  {
+    "id": "REV-1792603776",
+    "timestamp": "2026-10-21 22:59:36",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "APPROVE",
+    "risk_level": "LOW",
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 0,
+    "duration_ms": 0,
+    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
+      "risk_level": "LOW",
+      "verdict": "APPROVE",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [],
+      "compliance_matrix": [],
+      "average_cvss": null,
+      "max_cvss": null,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "utils/string_helpers.go"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T17:29:36.418434+00:00"
+    }
+  },
+  {
+    "id": "REV-1792600450",
+    "timestamp": "2026-10-21 22:04:10",
+    "repo_name": "llm fine tuning",
+    "commit_hash": "working-tree",
+    "verdict": "REQUEST_CHANGES",
+    "risk_level": "CRITICAL",
+    "counts": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "finding_count": 1,
+    "duration_ms": 0,
+    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+    "report": {
+      "version": "2.0.0",
+      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
+      "risk_level": "CRITICAL",
+      "verdict": "REQUEST_CHANGES",
+      "counts": {
+        "critical": 1,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "findings": [
+        {
+          "id": "SEC-INSECURE-DESERIALIZATION-001",
+          "rule_id": "CWE-502",
+          "title": "Unsafe PyTorch checkpoint loading via torch.load without weights_only lock",
+          "category": "SECURITY",
+          "severity": "CRITICAL",
+          "confidence": "HIGH",
+          "file": "ml/pipeline.py",
+          "line_start": 16,
+          "line_end": 16,
+          "evidence": [],
+          "description": "torch.load() executes arbitrary pickle bytecodes unless weights_only=True is explicitly enforced.",
+          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
+          "remediation": "Use a safe data format or a safe loader and validate the decoded structure before use. Never deserialize untrusted objects with pickle. No patch is generated because the required data schema is not represented in the diff.",
+          "suggested_fix": null,
+          "cwe_id": "CWE-502",
+          "owasp_category": "A08:2021-Software and Data Integrity Failures",
+          "cvss_score": 9.8,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "patch_status": "SUGGESTION_ONLY",
+          "provenance": "DETERMINISTIC_SCANNER",
+          "related_tests": []
+        }
+      ],
+      "compliance_matrix": [
+        {
+          "standard": "OWASP_TOP_10",
+          "category_id": "A08:2021",
+          "title": "Software and Data Integrity Failures",
+          "finding_ids": [
+            "SEC-INSECURE-DESERIALIZATION-001"
+          ],
+          "count": 1
+        }
+      ],
+      "average_cvss": 9.8,
+      "max_cvss": 9.8,
+      "unit_tests": [],
+      "execution_time_ms": 0,
+      "analyzed_files": [
+        "ml/pipeline.py"
+      ],
+      "engine": "CodeGuardian deterministic diff scanner",
+      "analyzers": [
+        "CodeGuardian built-in rules (added diff lines only)"
+      ],
+      "timestamp": "2026-10-21T16:34:10.286369+00:00"
+    }
+  },
+  {
     "id": "REV-1792600322",
     "timestamp": "2026-10-21 22:02:02",
     "repo_name": "llm fine tuning",
@@ -2282,963 +3273,6 @@
         "CodeGuardian built-in rules (added diff lines only)"
       ],
       "timestamp": "2026-10-21T16:15:14.952587+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599292",
-    "timestamp": "2026-10-21 21:44:52",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:14:52.341748+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599292",
-    "timestamp": "2026-10-21 21:44:52",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "REQUEST_CHANGES",
-    "risk_level": "CRITICAL",
-    "counts": {
-      "critical": 1,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 1,
-    "duration_ms": 0,
-    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-      "risk_level": "CRITICAL",
-      "verdict": "REQUEST_CHANGES",
-      "counts": {
-        "critical": 1,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [
-        {
-          "id": "SEC-SQLI-001",
-          "rule_id": "CWE-89",
-          "title": "Dynamic SQL query uses string interpolation",
-          "category": "SECURITY",
-          "severity": "CRITICAL",
-          "confidence": "HIGH",
-          "file": "auth/login.py",
-          "line_start": 12,
-          "line_end": 12,
-          "evidence": [],
-          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
-          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
-          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
-          "suggested_fix": null,
-          "cwe_id": "CWE-89",
-          "owasp_category": "A03:2021-Injection",
-          "cvss_score": 9.8,
-          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-          "patch_status": "SUGGESTION_ONLY",
-          "provenance": "DETERMINISTIC_SCANNER",
-          "related_tests": [
-            {
-              "name": "test_sql_injection_payload_is_rejected",
-              "framework": "pytest",
-              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-              "code": "",
-              "status": "GENERATED",
-              "execution_output": null
-            }
-          ]
-        }
-      ],
-      "compliance_matrix": [
-        {
-          "standard": "OWASP_TOP_10",
-          "category_id": "A03:2021",
-          "title": "Injection",
-          "finding_ids": [
-            "SEC-SQLI-001"
-          ],
-          "count": 1
-        }
-      ],
-      "average_cvss": 9.8,
-      "max_cvss": 9.8,
-      "unit_tests": [
-        {
-          "name": "test_sql_injection_payload_is_rejected",
-          "framework": "pytest",
-          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-          "code": "",
-          "status": "GENERATED",
-          "execution_output": null
-        }
-      ],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:14:52.322876+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599292",
-    "timestamp": "2026-10-21 21:44:52",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "REQUEST_CHANGES",
-    "risk_level": "CRITICAL",
-    "counts": {
-      "critical": 1,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 1,
-    "duration_ms": 0,
-    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-      "risk_level": "CRITICAL",
-      "verdict": "REQUEST_CHANGES",
-      "counts": {
-        "critical": 1,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [
-        {
-          "id": "SEC-SQLI-001",
-          "rule_id": "CWE-89",
-          "title": "Dynamic SQL query uses string interpolation",
-          "category": "SECURITY",
-          "severity": "CRITICAL",
-          "confidence": "HIGH",
-          "file": "auth/login.py",
-          "line_start": 12,
-          "line_end": 12,
-          "evidence": [],
-          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
-          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
-          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
-          "suggested_fix": null,
-          "cwe_id": "CWE-89",
-          "owasp_category": "A03:2021-Injection",
-          "cvss_score": 9.8,
-          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-          "patch_status": "SUGGESTION_ONLY",
-          "provenance": "DETERMINISTIC_SCANNER",
-          "related_tests": [
-            {
-              "name": "test_sql_injection_payload_is_rejected",
-              "framework": "pytest",
-              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-              "code": "",
-              "status": "GENERATED",
-              "execution_output": null
-            }
-          ]
-        }
-      ],
-      "compliance_matrix": [
-        {
-          "standard": "OWASP_TOP_10",
-          "category_id": "A03:2021",
-          "title": "Injection",
-          "finding_ids": [
-            "SEC-SQLI-001"
-          ],
-          "count": 1
-        }
-      ],
-      "average_cvss": 9.8,
-      "max_cvss": 9.8,
-      "unit_tests": [
-        {
-          "name": "test_sql_injection_payload_is_rejected",
-          "framework": "pytest",
-          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-          "code": "",
-          "status": "GENERATED",
-          "execution_output": null
-        }
-      ],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:14:52.302864+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599292",
-    "timestamp": "2026-10-21 21:44:52",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "REQUEST_CHANGES",
-    "risk_level": "CRITICAL",
-    "counts": {
-      "critical": 1,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 1,
-    "duration_ms": 0,
-    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-      "risk_level": "CRITICAL",
-      "verdict": "REQUEST_CHANGES",
-      "counts": {
-        "critical": 1,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [
-        {
-          "id": "SEC-SQLI-001",
-          "rule_id": "CWE-89",
-          "title": "Dynamic SQL query uses string interpolation",
-          "category": "SECURITY",
-          "severity": "CRITICAL",
-          "confidence": "HIGH",
-          "file": "auth/login.py",
-          "line_start": 12,
-          "line_end": 12,
-          "evidence": [],
-          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
-          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
-          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
-          "suggested_fix": null,
-          "cwe_id": "CWE-89",
-          "owasp_category": "A03:2021-Injection",
-          "cvss_score": 9.8,
-          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-          "patch_status": "SUGGESTION_ONLY",
-          "provenance": "DETERMINISTIC_SCANNER",
-          "related_tests": [
-            {
-              "name": "test_sql_injection_payload_is_rejected",
-              "framework": "pytest",
-              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-              "code": "",
-              "status": "GENERATED",
-              "execution_output": null
-            }
-          ]
-        }
-      ],
-      "compliance_matrix": [
-        {
-          "standard": "OWASP_TOP_10",
-          "category_id": "A03:2021",
-          "title": "Injection",
-          "finding_ids": [
-            "SEC-SQLI-001"
-          ],
-          "count": 1
-        }
-      ],
-      "average_cvss": 9.8,
-      "max_cvss": 9.8,
-      "unit_tests": [
-        {
-          "name": "test_sql_injection_payload_is_rejected",
-          "framework": "pytest",
-          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-          "code": "",
-          "status": "GENERATED",
-          "execution_output": null
-        }
-      ],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:14:52.283953+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599292",
-    "timestamp": "2026-10-21 21:44:52",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "api/handlers/file_upload.ts"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:14:52.258411+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599292",
-    "timestamp": "2026-10-21 21:44:52",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "utils/string_helpers.go"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:14:52.238796+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599291",
-    "timestamp": "2026-10-21 21:44:51",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "utils/string_helpers.go"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:14:51.565105+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599147",
-    "timestamp": "2026-10-21 21:42:27",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:12:27.652728+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599147",
-    "timestamp": "2026-10-21 21:42:27",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "REQUEST_CHANGES",
-    "risk_level": "CRITICAL",
-    "counts": {
-      "critical": 1,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 1,
-    "duration_ms": 0,
-    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-      "risk_level": "CRITICAL",
-      "verdict": "REQUEST_CHANGES",
-      "counts": {
-        "critical": 1,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [
-        {
-          "id": "SEC-SQLI-001",
-          "rule_id": "CWE-89",
-          "title": "Dynamic SQL query uses string interpolation",
-          "category": "SECURITY",
-          "severity": "CRITICAL",
-          "confidence": "HIGH",
-          "file": "auth/login.py",
-          "line_start": 12,
-          "line_end": 12,
-          "evidence": [],
-          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
-          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
-          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
-          "suggested_fix": null,
-          "cwe_id": "CWE-89",
-          "owasp_category": "A03:2021-Injection",
-          "cvss_score": 9.8,
-          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-          "patch_status": "SUGGESTION_ONLY",
-          "provenance": "DETERMINISTIC_SCANNER",
-          "related_tests": [
-            {
-              "name": "test_sql_injection_payload_is_rejected",
-              "framework": "pytest",
-              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-              "code": "",
-              "status": "GENERATED",
-              "execution_output": null
-            }
-          ]
-        }
-      ],
-      "compliance_matrix": [
-        {
-          "standard": "OWASP_TOP_10",
-          "category_id": "A03:2021",
-          "title": "Injection",
-          "finding_ids": [
-            "SEC-SQLI-001"
-          ],
-          "count": 1
-        }
-      ],
-      "average_cvss": 9.8,
-      "max_cvss": 9.8,
-      "unit_tests": [
-        {
-          "name": "test_sql_injection_payload_is_rejected",
-          "framework": "pytest",
-          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-          "code": "",
-          "status": "GENERATED",
-          "execution_output": null
-        }
-      ],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:12:27.634398+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599147",
-    "timestamp": "2026-10-21 21:42:27",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "REQUEST_CHANGES",
-    "risk_level": "CRITICAL",
-    "counts": {
-      "critical": 1,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 1,
-    "duration_ms": 0,
-    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-      "risk_level": "CRITICAL",
-      "verdict": "REQUEST_CHANGES",
-      "counts": {
-        "critical": 1,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [
-        {
-          "id": "SEC-SQLI-001",
-          "rule_id": "CWE-89",
-          "title": "Dynamic SQL query uses string interpolation",
-          "category": "SECURITY",
-          "severity": "CRITICAL",
-          "confidence": "HIGH",
-          "file": "auth/login.py",
-          "line_start": 12,
-          "line_end": 12,
-          "evidence": [],
-          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
-          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
-          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
-          "suggested_fix": null,
-          "cwe_id": "CWE-89",
-          "owasp_category": "A03:2021-Injection",
-          "cvss_score": 9.8,
-          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-          "patch_status": "SUGGESTION_ONLY",
-          "provenance": "DETERMINISTIC_SCANNER",
-          "related_tests": [
-            {
-              "name": "test_sql_injection_payload_is_rejected",
-              "framework": "pytest",
-              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-              "code": "",
-              "status": "GENERATED",
-              "execution_output": null
-            }
-          ]
-        }
-      ],
-      "compliance_matrix": [
-        {
-          "standard": "OWASP_TOP_10",
-          "category_id": "A03:2021",
-          "title": "Injection",
-          "finding_ids": [
-            "SEC-SQLI-001"
-          ],
-          "count": 1
-        }
-      ],
-      "average_cvss": 9.8,
-      "max_cvss": 9.8,
-      "unit_tests": [
-        {
-          "name": "test_sql_injection_payload_is_rejected",
-          "framework": "pytest",
-          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-          "code": "",
-          "status": "GENERATED",
-          "execution_output": null
-        }
-      ],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:12:27.615036+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599147",
-    "timestamp": "2026-10-21 21:42:27",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "REQUEST_CHANGES",
-    "risk_level": "CRITICAL",
-    "counts": {
-      "critical": 1,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 1,
-    "duration_ms": 0,
-    "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "1 deterministic finding(s) require review before merge. Locations and source evidence are limited to added diff lines.",
-      "risk_level": "CRITICAL",
-      "verdict": "REQUEST_CHANGES",
-      "counts": {
-        "critical": 1,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [
-        {
-          "id": "SEC-SQLI-001",
-          "rule_id": "CWE-89",
-          "title": "Dynamic SQL query uses string interpolation",
-          "category": "SECURITY",
-          "severity": "CRITICAL",
-          "confidence": "HIGH",
-          "file": "auth/login.py",
-          "line_start": 12,
-          "line_end": 12,
-          "evidence": [],
-          "description": "Added SQL text appears to interpolate runtime values rather than bind parameters.",
-          "exploit_conditions": "Exploitability depends on this value being reachable from an untrusted input. That data-flow condition has not been executed or reproduced by this review.",
-          "remediation": "Use the parameter-binding API documented by the active database driver. Preserve password-hash verification, reject missing users, and add tests for valid, invalid, unknown-user, and injection credentials. An automatic patch is withheld because the diff does not establish the database driver's placeholder style or row interface.",
-          "suggested_fix": null,
-          "cwe_id": "CWE-89",
-          "owasp_category": "A03:2021-Injection",
-          "cvss_score": 9.8,
-          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-          "patch_status": "SUGGESTION_ONLY",
-          "provenance": "DETERMINISTIC_SCANNER",
-          "related_tests": [
-            {
-              "name": "test_sql_injection_payload_is_rejected",
-              "framework": "pytest",
-              "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-              "code": "",
-              "status": "GENERATED",
-              "execution_output": null
-            }
-          ]
-        }
-      ],
-      "compliance_matrix": [
-        {
-          "standard": "OWASP_TOP_10",
-          "category_id": "A03:2021",
-          "title": "Injection",
-          "finding_ids": [
-            "SEC-SQLI-001"
-          ],
-          "count": 1
-        }
-      ],
-      "average_cvss": 9.8,
-      "max_cvss": 9.8,
-      "unit_tests": [
-        {
-          "name": "test_sql_injection_payload_is_rejected",
-          "framework": "pytest",
-          "description": "Candidate regression test. Wire the repository's database fixture and authentication entry point before executing it.",
-          "code": "",
-          "status": "GENERATED",
-          "execution_output": null
-        }
-      ],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:12:27.595188+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599147",
-    "timestamp": "2026-10-21 21:42:27",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "api/handlers/file_upload.ts"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:12:27.570237+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599147",
-    "timestamp": "2026-10-21 21:42:27",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "utils/string_helpers.go"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:12:27.553061+00:00"
-    }
-  },
-  {
-    "id": "REV-1792599146",
-    "timestamp": "2026-10-21 21:42:26",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "utils/string_helpers.go"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T16:12:26.862112+00:00"
-    }
-  },
-  {
-    "id": "REV-1792596215",
-    "timestamp": "2026-10-21 20:53:35",
-    "repo_name": "llm fine tuning",
-    "commit_hash": "working-tree",
-    "verdict": "APPROVE",
-    "risk_level": "LOW",
-    "counts": {
-      "critical": 0,
-      "high": 0,
-      "medium": 0,
-      "low": 0
-    },
-    "finding_count": 0,
-    "duration_ms": 0,
-    "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-    "report": {
-      "version": "2.0.0",
-      "summary": "No deterministic findings were detected in the added, source-located diff lines. This result is not a guarantee of security or correctness.",
-      "risk_level": "LOW",
-      "verdict": "APPROVE",
-      "counts": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 0
-      },
-      "findings": [],
-      "compliance_matrix": [],
-      "average_cvss": null,
-      "max_cvss": null,
-      "unit_tests": [],
-      "execution_time_ms": 0,
-      "analyzed_files": [
-        "auth/login.py"
-      ],
-      "engine": "CodeGuardian deterministic diff scanner",
-      "analyzers": [
-        "CodeGuardian built-in rules (added diff lines only)"
-      ],
-      "timestamp": "2026-10-21T15:23:35.303312+00:00"
     }
   }
 ]
