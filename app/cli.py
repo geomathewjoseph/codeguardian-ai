@@ -18,7 +18,14 @@ from app.history import export_pr_summary_markdown, export_report_markdown, expo
 from app.security_engine import analyze_diff
 
 
-console = Console()
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, OSError):
+        pass
+
+console = Console(legacy_windows=False)
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
 
